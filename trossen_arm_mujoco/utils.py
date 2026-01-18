@@ -29,15 +29,18 @@
 import collections
 import os
 
+import matplotlib.pyplot as plt
+import numpy as np
 from dm_control import mujoco
 from dm_control.mujoco import Physics
 from dm_control.rl import control
 from dm_control.suite import base
 from matplotlib.image import AxesImage
-import matplotlib.pyplot as plt
-import numpy as np
 
 from trossen_arm_mujoco.constants import ASSETS_DIR, DT
+
+# Module-level random state for reproducible box poses (matches act/utils.py)
+RANDOM_STATE = [np.random.RandomState(42)]
 
 
 def sample_box_pose() -> np.ndarray:
@@ -52,7 +55,7 @@ def sample_box_pose() -> np.ndarray:
     z_range = [0.045, 0.045]
 
     ranges = np.vstack([x_range, y_range, z_range])
-    cube_position = np.random.uniform(ranges[:, 0], ranges[:, 1])
+    cube_position = RANDOM_STATE[0].uniform(ranges[:, 0], ranges[:, 1])
 
     cube_quat = np.array([1, 0, 0, 0])
     return np.concatenate([cube_position, cube_quat])

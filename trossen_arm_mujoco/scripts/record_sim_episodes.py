@@ -204,6 +204,7 @@ def main(args):
         # HDF5
         t0 = time.time()
         dataset_path = os.path.join(hdf5_save_dir, f"episode_{episode_idx}")
+        episode_success = episode_max_reward == env.task.max_reward
         with h5py.File(dataset_path + ".hdf5", "w", rdcc_nbytes=1024**2 * 2) as root:
             root.attrs["sim"] = True
             obs = root.create_group("observations")
@@ -217,10 +218,14 @@ def main(args):
                 )
             _ = obs.create_dataset("qpos", (max_timesteps, 16))
             _ = obs.create_dataset("qvel", (max_timesteps, 16))
-            action = root.create_dataset("action", (max_timesteps, 16))
+            _ = root.create_dataset("action", (max_timesteps, 16))
 
             for name, array in data_dict.items():
                 root[name][...] = array
+
+            # Save box pose and success (matches act/record_sim_episodes.py)
+            root.create_dataset("box_pose", data=subtask_info[:7])  # (7,) [x,y,z,qw,qx,qy,qz]
+            root.create_dataset("success", data=episode_success)
 
         print(f"Saving: {time.time() - t0:.1f} secs\n")
 
