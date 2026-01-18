@@ -26,8 +26,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from importlib.resources import files
 import os
+from pathlib import Path
 
 import numpy as np
 
@@ -66,7 +66,7 @@ START_ARM_POSE = [
     0.044,
 ]
 
-# Get the path to the assets directory
-ASSETS_DIR = str(files("trossen_arm_mujoco").joinpath("assets"))
+# Get the path to the assets directory (use __file__ for editable install compatibility)
+ASSETS_DIR = str(Path(__file__).parent / "assets")
 
 BOX_POSE = [None]
